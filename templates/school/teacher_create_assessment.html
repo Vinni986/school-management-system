@@ -1,0 +1,6 @@
+{% extends 'school/staff_layout.html' %}
+{% block school_content %}
+<div class="school-hero"><div><small>TEACHER TOOLS</small><h1>Create assessment</h1><p>Build a quiz, baseline, exam or practice assessment from your question bank.</p></div></div>
+{% if messages %}{% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}{% endif %}
+<section class="school-panel"><form method="post">{% csrf_token %}{{ form.as_p }}<hr><div class="panel-head"><div><h2>Select questions</h2><p><a href="{% url 'school_teacher_create_question' %}">Create a new question</a> first if the bank is empty.</p></div></div>{% for q in questions %}<label class="question-pick"><input type="checkbox" name="questions" value="{{ q.pk }}"> <span><b>{{ q.text }}</b><small>{{ q.concept.chapter.subject.name }} • {{ q.concept.title }} • {{ q.difficulty }}</small></span></label>{% empty %}<p class="empty">No questions available for your assignments.</p>{% endfor %}<button class="school-btn" type="submit">Create Assessment</button></form></section>
+{% endblock %}

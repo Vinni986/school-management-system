@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}SkyLearn School{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block maincontent %}
+<div class="school-shell">
+  <aside class="school-sidebar" id="schoolSidebar">
+    <div class="brand-row"><div class="brand-mark">S</div><div><strong>SkyLearn</strong><span>School AI</span></div></div>
+    <div class="school-profile"><div class="avatar">{{ request.user.first_name|default:'S'|slice:':1'|upper }}</div><div><b>{{ request.user.first_name|default:'Student' }}</b><small>{% if enrollment %}{{ enrollment.section.grade.name }} • Section {{ enrollment.section.name }}{% else %}Student{% endif %}</small></div></div>
+    <nav class="school-nav">
+      <a href="{% url 'school_dashboard' %}" class="{% if active_page == 'dashboard' or not active_page %}active{% endif %}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a href="{% url 'school_learning' %}" class="{% if active_page == 'learning' %}active{% endif %}"><i class="fa-solid fa-route"></i> My Learning</a>
+      <a href="{% url 'school_assessment' %}" class="{% if active_page == 'assessment' %}active{% endif %}"><i class="fa-solid fa-clipboard-check"></i> Assessments</a>
+      <a href="{% url 'school_gaps' %}" class="{% if active_page == 'gaps' %}active{% endif %}"><i class="fa-solid fa-bullseye"></i> Learning Gaps {% if gap_count %}<em>{{ gap_count }}</em>{% endif %}</a>
+      <a href="{% url 'school_resources' %}" class="{% if active_page == 'resources' %}active{% endif %}"><i class="fa-solid fa-book-open"></i> Resources</a>
+      <a href="{% url 'school_reports' %}" class="{% if active_page == 'reports' %}active{% endif %}"><i class="fa-solid fa-chart-column"></i> My Reports</a>
+      <div class="nav-label">TOOLS</div>
+      <a href="{% url 'school_dashboard' %}#ai-tools"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Class</a>
+      <a href="{% url 'school_assessment' %}"><i class="fa-solid fa-bolt"></i> Practice</a>
+      <a href="{% url 'school_resources' %}#all"><i class="fa-solid fa-layer-group"></i> Flashcards</a>
+      <a href="{% url 'school_assessment' %}"><i class="fa-solid fa-file-lines"></i> Exam Prep</a>
+    </nav>
+    <div class="sidebar-bottom"><div class="upgrade"><i class="fa-solid fa-sparkles"></i><b>AI Learning Coach</b><span>Personalized help is ready.</span><a href="{% url 'school_gaps' %}">Ask AI Coach</a></div><a href="{% url 'profile' %}"><i class="fa-solid fa-gear"></i> Settings</a></div>
+  </aside>
+  <main class="school-main">
+    <header class="school-topbar"><button class="mobile-menu" onclick="document.getElementById('schoolSidebar').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button><div class="crumb">{% if enrollment %}{{ enrollment.section.grade.name }}-{{ enrollment.section.name }}{% else %}Student{% endif %} <span>/</span> {{ page_title|default:'Dashboard' }}</div><div class="top-actions"><button class="icon-btn"><i class="fa-regular fa-bell"></i><span></span></button><div class="mini-avatar">{{ request.user.first_name|default:'S'|slice:':1'|upper }}</div></div></header>
+    <div class="school-content">{% block school_content %}{% endblock %}</div>
+  </main>
+</div>
+{% endblock %}
+{% block js %}<script src="{% static 'js/school.js' %}"></script>{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block sidebar %}{% endblock %}
+{% block maincontent %}
+<div class="school-shell">
+  <aside class="school-sidebar" id="schoolSidebar">
+    <div class="brand-row"><div class="brand-mark">S</div><div><strong>SkyLearn</strong><span>School AI</span></div></div>
+    <div class="school-profile"><div class="avatar">{{ request.user.first_name|default:'S'|slice:':1'|upper }}</div><div><b>{{ request.user.get_full_name }}</b><small>{% if request.user.is_principal %}Principal{% else %}Teacher{% endif %}{% if school %} • {{ school.name }}{% endif %}</small></div></div>
+    <nav class="school-nav">
+      <a href="{% if request.user.is_principal %}{% url 'school_principal_dashboard' %}{% else %}{% url 'school_teacher_dashboard' %}{% endif %}" class="active"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      {% if request.user.is_principal %}<a href="#school-overview"><i class="fa-solid fa-school"></i> School Overview</a><a href="{% url 'school_principal_manage' %}"><i class="fa-solid fa-user-plus"></i> Manage School</a><a href="#teachers"><i class="fa-solid fa-chalkboard-user"></i> Teachers</a><a href="#classes"><i class="fa-solid fa-users"></i> Classes</a><a href="#performance"><i class="fa-solid fa-chart-column"></i> Performance</a>{% else %}<a href="#classes"><i class="fa-solid fa-users"></i> My Classes</a><a href="#assessments"><i class="fa-solid fa-clipboard-check"></i> Assessments</a><a href="{% url 'school_teacher_create_assessment' %}"><i class="fa-solid fa-plus"></i> Create Assessment</a><a href="#gaps"><i class="fa-solid fa-bullseye"></i> Student Gaps</a><a href="#performance"><i class="fa-solid fa-chart-column"></i> Performance</a>{% endif %}
+      <a href="{% url 'school_resources' %}"><i class="fa-solid fa-book-open"></i> Resources</a>
+    </nav>
+    <div class="sidebar-bottom"><a href="{% url 'profile' %}"><i class="fa-solid fa-gear"></i> Settings</a></div>
+  </aside>
+  <main class="school-main"><header class="school-topbar"><button class="mobile-menu" onclick="document.getElementById('schoolSidebar').classList.toggle('open')"><i class="fa-solid fa-bars"></i></button><div class="crumb">{% if school %}{{ school.name }}{% endif %} <span>/</span> {{ page_title }}</div><div class="top-actions"><button class="icon-btn"><i class="fa-regular fa-bell"></i></button><div class="mini-avatar">{{ request.user.first_name|default:'S'|slice:':1'|upper }}</div></div></header><div class="school-content">{% block school_content %}{% endblock %}</div></main>
+</div>
+{% endblock %}
+{% block js %}<script src="{% static 'js/school.js' %}"></script>{% endblock %}

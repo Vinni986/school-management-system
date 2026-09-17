@@ -1,0 +1,13 @@
+{% extends 'school/staff_layout.html' %}
+{% block school_content %}
+<div class="school-hero"><div><small>SCHOOL ADMINISTRATION</small><h1>Manage your school</h1><p>Create staff, classes, sections and students.</p></div></div>
+{% if messages %}{% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}{% endif %}
+<div class="school-grid-2">
+<section class="school-panel"><div class="panel-head"><div><h2>Add teacher</h2><p>Create a teacher account and assign a subject/section.</p></div></div><form method="post">{% csrf_token %}<input type="hidden" name="action" value="teacher">{{ forms.teacher_form.as_p }}<button class="school-btn" type="submit">Create Teacher</button></form></section>
+<section class="school-panel"><div class="panel-head"><div><h2>Add student</h2><p>Create a student and enroll them in the current year.</p></div></div><form method="post">{% csrf_token %}<input type="hidden" name="action" value="student">{{ forms.student_form.as_p }}<button class="school-btn" type="submit">Create Student</button></form></section>
+<section class="school-panel"><div class="panel-head"><div><h2>Add class</h2><p>Add a grade to your school.</p></div></div><form method="post">{% csrf_token %}<input type="hidden" name="action" value="grade">{{ forms.grade_form.as_p }}<button class="school-btn" type="submit">Create Class</button></form></section>
+<section class="school-panel"><div class="panel-head"><div><h2>Add section</h2><p>Attach a section and optional class teacher.</p></div></div><form method="post">{% csrf_token %}<input type="hidden" name="action" value="section">{{ forms.section_form.as_p }}<button class="school-btn" type="submit">Create Section</button></form></section>
+</div>
+<div class="school-grid-2"><section class="school-panel"><div class="panel-head"><div><h2>Teachers</h2></div></div>{% for t in teachers %}<div class="list-row"><div><b>{{ t.get_full_name }}</b><small>{{ t.username }} • {{ t.email|default:'No email' }}</small></div><span>Teacher</span></div>{% empty %}<p class="empty">No teachers.</p>{% endfor %}</section>
+<section class="school-panel"><div class="panel-head"><div><h2>Students</h2></div></div>{% for s in students %}<div class="list-row"><div><b>{{ s.student.get_full_name }}</b><small>{{ s.student.username }}</small></div><a href="{% url 'school_principal_student_detail' s.pk %}">View</a></div>{% empty %}<p class="empty">No students.</p>{% endfor %}</section></div>
+{% endblock %}

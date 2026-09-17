@@ -1,0 +1,4 @@
+{% extends 'school/layout.html' %}{% block school_content %}
+<div class="page-title"><div><p class="eyebrow">{{ attempt.assessment.assessment_type|upper }}</p><h1>{{ attempt.assessment.title }}</h1><p>{{ questions|length }} questions • {{ attempt.assessment.time_limit_minutes }} minutes</p></div></div>
+<form method="post" class="panel assessment-form">{% csrf_token %}{% for q in questions %}<div class="question-block"><span>Question {{ forloop.counter }} • {{ q.marks }} mark{{ q.marks|pluralize }}</span><h3>{{ q.text }}</h3>{% for option in q.options.all %}<label class="option"><input type="radio" name="question_{{ q.pk }}" value="{{ option.pk }}" required> {{ option.text }}</label>{% endfor %}</div>{% endfor %}<button class="primary-btn" type="submit">Submit assessment</button></form>
+{% endblock %}
