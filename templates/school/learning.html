@@ -1,0 +1,757 @@
+{% extends 'school/layout.html' %}
+
+{% block school_content %}
+
+<style>
+.learning-page {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.learning-header {
+    margin-bottom: 25px;
+}
+
+.learning-header .eyebrow {
+    margin: 0 0 6px;
+    color: #6366f1;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .1em;
+}
+
+.learning-header h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 30px;
+}
+
+.learning-header p {
+    margin: 8px 0 0;
+    color: #6b7280;
+}
+
+.path-banner {
+    margin-bottom: 28px;
+    padding: 22px 24px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    border: 1px solid #e0e7ff;
+}
+
+.path-banner-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+}
+
+.path-banner-label {
+    color: #6366f1;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.path-banner h2 {
+    margin: 6px 0;
+    font-size: 19px;
+    color: #111827;
+}
+
+.path-banner p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.path-progress {
+    min-width: 130px;
+    text-align: right;
+}
+
+.path-progress strong {
+    display: block;
+    font-size: 26px;
+    color: #4338ca;
+}
+
+.path-progress span {
+    color: #6b7280;
+    font-size: 11px;
+}
+
+.learning-subject {
+    margin-bottom: 18px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.subject-summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.subject-summary::-webkit-details-marker {
+    display: none;
+}
+
+.subject-summary-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.subject-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subject-summary h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #111827;
+}
+
+.subject-summary p {
+    margin: 4px 0 0;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.subject-summary-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.chapter-container {
+    padding: 0 18px 18px;
+}
+
+.chapter {
+    border: 1px solid #eef2f7;
+    border-radius: 15px;
+    margin-top: 11px;
+    overflow: hidden;
+}
+
+.chapter-summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 17px;
+    background: #fafafa;
+}
+
+.chapter-summary::-webkit-details-marker {
+    display: none;
+}
+
+.chapter-title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.chapter-number {
+    width: 31px;
+    height: 31px;
+    border-radius: 9px;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.chapter-title strong {
+    display: block;
+    color: #111827;
+    font-size: 14px;
+}
+
+.chapter-title span {
+    display: block;
+    margin-top: 3px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.chapter-progress {
+    margin-top: 7px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chapter-progress-bar {
+    width: 120px;
+    height: 6px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #e5e7eb;
+}
+
+.chapter-progress-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #4f46e5;
+}
+
+.chapter-progress-text {
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.resource-groups {
+    padding: 12px 15px 16px;
+}
+
+.resource-group {
+    margin-top: 10px;
+}
+
+.resource-group:first-child {
+    margin-top: 0;
+}
+
+.resource-group-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.resource-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.resource-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 13px;
+    padding: 11px 13px;
+    border: 1px solid #edf0f4;
+    border-radius: 12px;
+}
+
+.resource-info {
+    min-width: 0;
+}
+
+.resource-info strong {
+    display: block;
+    color: #111827;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resource-info span {
+    display: block;
+    margin-top: 3px;
+    color: #9ca3af;
+    font-size: 10px;
+}
+
+.resource-open {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: #eef2ff;
+    color: #4f46e5;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.resource-open:hover {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.learning-empty {
+    padding: 38px;
+    text-align: center;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+}
+
+.learning-empty h2 {
+    margin: 0;
+    color: #111827;
+}
+
+.learning-empty p {
+    color: #6b7280;
+}
+
+@media (max-width: 800px) {
+    .path-banner-inner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .path-progress {
+        text-align: left;
+    }
+
+    .resource-list {
+        grid-template-columns: 1fr;
+    }
+
+    .subject-summary-right {
+        display: none;
+    }
+}
+</style>
+
+<div class="learning-page">
+
+    <div class="learning-header">
+        <p class="eyebrow">MY LEARNING</p>
+        <h1>Learn at your own pace</h1>
+        <p>
+            Explore your subjects, chapters and learning resources.
+        </p>
+    </div>
+
+    {% if active_path %}
+    <section class="path-banner">
+
+        <div class="path-banner-inner">
+
+            <div>
+                <span class="path-banner-label">
+                    PERSONALIZED LEARNING PATH
+                </span>
+
+                <h2>{{ active_path.title }}</h2>
+
+                <p>
+                    {{ active_path.subject.name }}
+                    · {{ active_path.items.count }} learning steps
+                    · Generated {{ active_path.generated_at|date:"d M Y" }}
+                </p>
+            </div>
+
+            <div class="path-progress">
+                <strong>{{ active_path.progress_percentage|floatformat:0 }}%</strong>
+                <span>Path progress</span>
+            </div>
+
+        </div>
+
+    </section>
+    {% endif %}
+
+    {% if learning_subjects %}
+
+        {% for subject_group in learning_subjects %}
+
+        <details
+            id="subject-{{ subject_group.subject.id }}"
+            class="learning-subject"
+            {% if selected_subject_id %}
+                {% if selected_subject_id == subject_group.subject.id %}open{% endif %}
+            {% elif forloop.first %}
+                open
+            {% endif %}
+        >
+
+            <summary class="subject-summary">
+
+                <div class="subject-summary-left">
+
+                    <div class="subject-icon">
+
+                        {% if "science" in subject_group.subject.name|lower %}
+                            <i class="fa-solid fa-flask"></i>
+                        {% elif "math" in subject_group.subject.name|lower %}
+                            <i class="fa-solid fa-calculator"></i>
+                        {% elif "english" in subject_group.subject.name|lower %}
+                            <i class="fa-solid fa-book-open"></i>
+                        {% else %}
+                            <i class="fa-solid fa-book"></i>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+                        <h2>{{ subject_group.subject.name }}</h2>
+
+                        <p>
+                            {{ subject_group.chapter_count }}
+                            chapter{{ subject_group.chapter_count|pluralize }}
+                            ·
+                            {{ subject_group.completed_count }}/{{ subject_group.resource_count }}
+                            resources completed
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="subject-summary-right">
+                    <span>Explore chapters</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+
+            </summary>
+
+            <div class="chapter-container">
+
+                {% for chapter_group in subject_group.chapters %}
+
+                <details class="chapter" {% if forloop.first %}open{% endif %}>
+
+                    <summary class="chapter-summary">
+
+                        <div class="chapter-title">
+
+                            <div class="chapter-number">
+                                {{ chapter_group.chapter.order }}
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ chapter_group.chapter.title }}
+                                </strong>
+
+                                <span>
+                                    {{ chapter_group.completed_total }}/{{ chapter_group.resource_total }}
+                                    resources completed
+                                </span>
+
+                                <div class="chapter-progress">
+                                    <div class="chapter-progress-bar">
+                                        <span style="width: {{ chapter_group.progress_percentage }}%;"></span>
+                                    </div>
+
+                                    <span class="chapter-progress-text">
+                                        {{ chapter_group.progress_percentage }}%
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-down"
+                           style="color:#9ca3af;font-size:11px;"></i>
+
+                    </summary>
+
+                    <div class="resource-groups">
+
+                        {% if chapter_group.videos %}
+                        <div class="resource-group">
+
+                            <div class="resource-group-title">
+                                <i class="fa-solid fa-circle-play"></i>
+                                Videos
+                            </div>
+
+                            <div class="resource-list">
+
+                                {% for resource in chapter_group.videos %}
+
+                                <div class="resource-card">
+
+                                    <div class="resource-info">
+
+                                        <strong title="{{ resource.title }}">
+                                            {{ resource.title }}
+                                        </strong>
+
+                                        <span>
+                                            {{ resource.source_name|default:"NCERT / DIKSHA" }}
+                                            {% if resource.duration_minutes %}
+                                                · {{ resource.duration_minutes }} min
+                                            {% endif %}
+                                        </span>
+
+                                    </div>
+
+                                    <div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+
+                                        <a class="resource-open"
+                                           href="{% url 'school_resource_open' resource.pk %}">
+                                            Open
+                                        </a>
+
+                                        {% if resource.is_completed %}
+                                            <span style="font-size:10px;font-weight:800;color:#16a34a;">
+                                                ✓ Completed
+                                            </span>
+                                        {% else %}
+                                            <form method="post"
+                                                  action="{% url 'school_resource_complete' resource.pk %}"
+                                                  style="margin:0;">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        style="border:0;background:#ecfdf5;color:#15803d;border-radius:8px;padding:7px 9px;font-size:10px;font-weight:800;cursor:pointer;">
+                                                    Mark complete
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+                        {% endif %}
+
+                        {% if chapter_group.pdfs %}
+                        <div class="resource-group">
+
+                            <div class="resource-group-title">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                PDFs
+                            </div>
+
+                            <div class="resource-list">
+
+                                {% for resource in chapter_group.pdfs %}
+
+                                <div class="resource-card">
+
+                                    <div class="resource-info">
+
+                                        <strong title="{{ resource.title }}">
+                                            {{ resource.title }}
+                                        </strong>
+
+                                        <span>
+                                            {{ resource.source_name|default:"NCERT / DIKSHA" }}
+                                        </span>
+
+                                    </div>
+
+                                    <div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+
+                                        <a class="resource-open"
+                                           href="{% url 'school_resource_open' resource.pk %}">
+                                            Open
+                                        </a>
+
+                                        {% if resource.is_completed %}
+                                            <span style="font-size:10px;font-weight:800;color:#16a34a;">
+                                                ✓ Completed
+                                            </span>
+                                        {% else %}
+                                            <form method="post"
+                                                  action="{% url 'school_resource_complete' resource.pk %}"
+                                                  style="margin:0;">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        style="border:0;background:#ecfdf5;color:#15803d;border-radius:8px;padding:7px 9px;font-size:10px;font-weight:800;cursor:pointer;">
+                                                    Mark complete
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+                        {% endif %}
+
+                        {% if chapter_group.interactive %}
+                        <div class="resource-group">
+
+                            <div class="resource-group-title">
+                                <i class="fa-solid fa-puzzle-piece"></i>
+                                Interactive
+                            </div>
+
+                            <div class="resource-list">
+
+                                {% for resource in chapter_group.interactive %}
+
+                                <div class="resource-card">
+
+                                    <div class="resource-info">
+
+                                        <strong title="{{ resource.title }}">
+                                            {{ resource.title }}
+                                        </strong>
+
+                                        <span>
+                                            {{ resource.source_name|default:"NCERT / DIKSHA" }}
+                                        </span>
+
+                                    </div>
+
+                                    <div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+
+                                        <a class="resource-open"
+                                           href="{% url 'school_resource_open' resource.pk %}">
+                                            Open
+                                        </a>
+
+                                        {% if resource.is_completed %}
+                                            <span style="font-size:10px;font-weight:800;color:#16a34a;">
+                                                ✓ Completed
+                                            </span>
+                                        {% else %}
+                                            <form method="post"
+                                                  action="{% url 'school_resource_complete' resource.pk %}"
+                                                  style="margin:0;">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        style="border:0;background:#ecfdf5;color:#15803d;border-radius:8px;padding:7px 9px;font-size:10px;font-weight:800;cursor:pointer;">
+                                                    Mark complete
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+                        {% endif %}
+
+                        {% if chapter_group.other %}
+                        <div class="resource-group">
+
+                            <div class="resource-group-title">
+                                <i class="fa-solid fa-book"></i>
+                                Other Resources
+                            </div>
+
+                            <div class="resource-list">
+
+                                {% for resource in chapter_group.other %}
+
+                                <div class="resource-card">
+
+                                    <div class="resource-info">
+
+                                        <strong title="{{ resource.title }}">
+                                            {{ resource.title }}
+                                        </strong>
+
+                                        <span>
+                                            {{ resource.source_name|default:"NCERT / DIKSHA" }}
+                                        </span>
+
+                                    </div>
+
+                                    <div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+
+                                        <a class="resource-open"
+                                           href="{% url 'school_resource_open' resource.pk %}">
+                                            Open
+                                        </a>
+
+                                        {% if resource.is_completed %}
+                                            <span style="font-size:10px;font-weight:800;color:#16a34a;">
+                                                ✓ Completed
+                                            </span>
+                                        {% else %}
+                                            <form method="post"
+                                                  action="{% url 'school_resource_complete' resource.pk %}"
+                                                  style="margin:0;">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        style="border:0;background:#ecfdf5;color:#15803d;border-radius:8px;padding:7px 9px;font-size:10px;font-weight:800;cursor:pointer;">
+                                                    Mark complete
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+                        {% endif %}
+
+                        {% if not chapter_group.resource_total %}
+                        <div style="padding:15px;color:#9ca3af;font-size:12px;">
+                            No learning resources are available for this chapter yet.
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                </details>
+
+                {% endfor %}
+
+            </div>
+
+        </details>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="learning-empty">
+
+            <h2>No subjects available yet</h2>
+
+            <p>
+                Your class does not have any learning subjects assigned yet.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

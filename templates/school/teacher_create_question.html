@@ -1,0 +1,57 @@
+{% extends 'school/staff_layout.html' %}
+
+{% block school_content %}
+<div class="school-hero">
+    <div>
+        <small>QUESTION BANK</small>
+        <h1>Create question</h1>
+        <p>Add an MCQ mapped to the correct class, subject, chapter and concept.</p>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}"
+             style="padding:12px 16px;margin-bottom:14px;border-radius:10px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<section class="school-panel">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div style="color:#b91c1c;margin-bottom:15px;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div style="margin-bottom:18px;">
+                <label for="{{ field.id_for_label }}"
+                       style="display:block;font-weight:700;margin-bottom:6px;">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <small style="display:block;color:#64748b;margin-top:4px;">
+                        {{ field.help_text }}
+                    </small>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <div style="color:#b91c1c;font-size:13px;margin-top:5px;">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button class="school-btn" type="submit">Save Question</button>
+    </form>
+</section>
+{% endblock %}

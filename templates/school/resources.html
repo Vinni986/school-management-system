@@ -1,0 +1,413 @@
+{% extends layout_template %}
+{% block school_content %}
+
+<style>
+.resource-library {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.subject-folder,
+.chapter-folder {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.subject-folder summary,
+.chapter-folder summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.subject-folder summary::-webkit-details-marker,
+.chapter-folder summary::-webkit-details-marker {
+    display: none;
+}
+
+.subject-summary {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.chapter-summary {
+    padding: 15px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.subject-summary:hover,
+.chapter-summary:hover {
+    background: #f8fafc;
+}
+
+.folder-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.folder-icon {
+    font-size: 20px;
+    width: 26px;
+    text-align: center;
+}
+
+.subject-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.chapter-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+.folder-meta {
+    margin-top: 3px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.folder-count {
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.subject-body {
+    padding: 0 14px 14px;
+    background: #fafbfc;
+    border-top: 1px solid #eef0f2;
+}
+
+.chapter-folder {
+    margin-top: 12px;
+}
+
+.chapter-body {
+    padding: 16px;
+    background: #fafbfc;
+    border-top: 1px solid #eef0f2;
+}
+
+.resource-type-section {
+    margin-bottom: 20px;
+}
+
+.resource-type-section:last-child {
+    margin-bottom: 0;
+}
+
+.resource-type-title {
+    margin: 0 0 9px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.resource-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.resource-item {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    padding: 11px 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+}
+
+.resource-item-main {
+    min-width: 0;
+}
+
+.resource-item-title {
+    font-weight: 600;
+    color: #111827;
+}
+
+.resource-item-meta {
+    margin-top: 3px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.resource-open {
+    flex-shrink: 0;
+}
+</style>
+
+<div class="page-title">
+    <div>
+        <p class="eyebrow">LEARNING LIBRARY</p>
+        <h1>Resources</h1>
+        <p>Browse learning resources by subject, chapter and format.</p>
+        <p class="folder-meta">
+            {{ resource_total }} resources across {{ subject_groups|length }} subjects
+        </p>
+    </div>
+</div>
+
+<div class="resource-tabs">
+    <button class="active">Recommended</button>
+    <a href="#all">All subjects</a>
+</div>
+
+<div class="resource-grid">
+    {% for r in recommended_resources %}
+        <div class="resource-card">
+            <div class="resource-cover purple-cover">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+
+            <span>RECOMMENDED • {{ r.resource_type|upper }}</span>
+
+            <h3>{{ r.title }}</h3>
+
+            <p>
+                {{ r.concept.chapter.subject.name }}
+                • {{ r.concept.chapter.title }}
+            </p>
+
+            {% if r.source_name %}
+                <small>Source: {{ r.source_name }}</small>
+            {% endif %}
+
+            <a href="{% url 'school_resource_open' r.pk %}">
+                Start resource →
+            </a>
+        </div>
+    {% empty %}
+        <div class="panel empty-state">
+            <h3>No personalized resources yet</h3>
+            <p>
+                Resources will appear here when concepts and remedial content are added.
+            </p>
+        </div>
+    {% endfor %}
+</div>
+
+<div id="all" class="panel">
+    <div class="panel-head">
+        <div>
+            <h2>All subjects</h2>
+            <p>Choose a subject, then a chapter, to browse its resources.</p>
+        </div>
+    </div>
+
+    <div class="resource-library">
+
+        {% for subject_group in subject_groups %}
+
+            <details class="subject-folder">
+
+                <summary class="subject-summary">
+                    <div class="folder-title">
+                        <span class="folder-icon">
+                            📁
+                        </span>
+
+                        <div>
+                            <div class="subject-name">
+                                {{ subject_group.subject.name }}
+                            </div>
+
+                            <div class="folder-meta">
+                                {{ subject_group.chapters|length }} chapters
+                                • {{ subject_group.total }} resources
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="folder-count">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </summary>
+
+                <div class="subject-body">
+
+                    {% for group in subject_group.chapters %}
+
+                        <details class="chapter-folder">
+
+                            <summary class="chapter-summary">
+                                <div class="folder-title">
+                                    <span class="folder-icon">
+                                        📂
+                                    </span>
+
+                                    <div>
+                                        <div class="chapter-name">
+                                            Chapter {{ group.chapter.order }}
+                                            — {{ group.chapter.title }}
+                                        </div>
+
+                                        <div class="folder-meta">
+                                            {{ group.total }} resources
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="folder-count">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                            </summary>
+
+                            <div class="chapter-body">
+
+                                {% if group.videos %}
+                                    <div class="resource-type-section">
+                                        <h3 class="resource-type-title">
+                                            🎥 Videos ({{ group.videos|length }})
+                                        </h3>
+
+                                        <div class="resource-items">
+                                            {% for r in group.videos %}
+                                                <div class="resource-item">
+                                                    <div class="resource-item-main">
+                                                        <div class="resource-item-title">
+                                                            {{ r.title }}
+                                                        </div>
+
+                                                        <div class="resource-item-meta">
+                                                            {{ r.source_name|default:"NCERT / DIKSHA" }}
+                                                        </div>
+                                                    </div>
+
+                                                    <a class="secondary-btn resource-open"
+                                                       href="{% url 'school_resource_open' r.pk %}">
+                                                        Open
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+
+                                {% if group.pdfs %}
+                                    <div class="resource-type-section">
+                                        <h3 class="resource-type-title">
+                                            📄 PDFs ({{ group.pdfs|length }})
+                                        </h3>
+
+                                        <div class="resource-items">
+                                            {% for r in group.pdfs %}
+                                                <div class="resource-item">
+                                                    <div class="resource-item-main">
+                                                        <div class="resource-item-title">
+                                                            {{ r.title }}
+                                                        </div>
+
+                                                        <div class="resource-item-meta">
+                                                            {{ r.source_name|default:"NCERT / DIKSHA" }}
+                                                        </div>
+                                                    </div>
+
+                                                    <a class="secondary-btn resource-open"
+                                                       href="{% url 'school_resource_open' r.pk %}">
+                                                        Open
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+
+                                {% if group.interactive %}
+                                    <div class="resource-type-section">
+                                        <h3 class="resource-type-title">
+                                            🧩 Interactive ({{ group.interactive|length }})
+                                        </h3>
+
+                                        <div class="resource-items">
+                                            {% for r in group.interactive %}
+                                                <div class="resource-item">
+                                                    <div class="resource-item-main">
+                                                        <div class="resource-item-title">
+                                                            {{ r.title }}
+                                                        </div>
+
+                                                        <div class="resource-item-meta">
+                                                            {{ r.source_name|default:"NCERT / DIKSHA" }}
+                                                        </div>
+                                                    </div>
+
+                                                    <a class="secondary-btn resource-open"
+                                                       href="{% url 'school_resource_open' r.pk %}">
+                                                        Open
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+
+                                {% if group.other %}
+                                    <div class="resource-type-section">
+                                        <h3 class="resource-type-title">
+                                            📚 Other ({{ group.other|length }})
+                                        </h3>
+
+                                        <div class="resource-items">
+                                            {% for r in group.other %}
+                                                <div class="resource-item">
+                                                    <div class="resource-item-main">
+                                                        <div class="resource-item-title">
+                                                            {{ r.title }}
+                                                        </div>
+
+                                                        <div class="resource-item-meta">
+                                                            {{ r.resource_type|title }}
+                                                        </div>
+                                                    </div>
+
+                                                    <a class="secondary-btn resource-open"
+                                                       href="{% url 'school_resource_open' r.pk %}">
+                                                        Open
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </details>
+
+                    {% endfor %}
+
+                </div>
+
+            </details>
+
+        {% empty %}
+
+            <div class="empty-state">
+                No resources have been published yet.
+            </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

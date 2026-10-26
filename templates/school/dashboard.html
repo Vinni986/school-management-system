@@ -1,0 +1,1043 @@
+{% extends 'school/layout.html' %}
+
+{% block school_content %}
+
+<style>
+.student-dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.student-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+    padding: 28px 30px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f5f3ff 0%, #eef6ff 55%, #f7fbff 100%);
+    border: 1px solid rgba(99, 102, 241, 0.10);
+}
+
+.student-hero .eyebrow {
+    margin: 0 0 7px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #6366f1;
+}
+
+.student-hero h1 {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.15;
+    color: #111827;
+}
+
+.student-hero p {
+    margin: 9px 0 0;
+    color: #6b7280;
+}
+
+.student-hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.student-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 17px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all .2s ease;
+}
+
+.student-btn-primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.student-btn-primary:hover {
+    background: #4338ca;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.student-btn-secondary {
+    background: white;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.student-btn-secondary:hover {
+    background: #f9fafb;
+    color: #111827;
+}
+
+.student-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.student-stat {
+    position: relative;
+    overflow: hidden;
+    padding: 21px;
+    min-height: 135px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, .04);
+}
+
+.student-stat-label {
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.student-stat-value {
+    display: block;
+    margin-top: 9px;
+    font-size: 30px;
+    line-height: 1;
+    font-weight: 800;
+    color: #111827;
+}
+
+.student-stat-note {
+    display: block;
+    margin-top: 8px;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.student-stat-icon {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.student-stat-purple .student-stat-icon {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.student-stat-orange .student-stat-icon {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.student-stat-green .student-stat-icon {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.student-stat-blue .student-stat-icon {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.student-section {
+    margin-bottom: 30px;
+}
+
+.student-section-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.student-section-header h2 {
+    margin: 0;
+    font-size: 21px;
+    color: #111827;
+}
+
+.student-section-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.student-section-link {
+    color: #4f46e5;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.student-section-link:hover {
+    color: #3730a3;
+}
+
+.student-continue {
+    display: grid;
+    grid-template-columns: 1.5fr .75fr;
+    gap: 18px;
+}
+
+.student-feature-card {
+    position: relative;
+    overflow: hidden;
+    padding: 26px;
+    min-height: 230px;
+    border-radius: 22px;
+    background: #111827;
+    color: white;
+}
+
+.student-feature-card:after {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    right: -70px;
+    top: -85px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, .28);
+}
+
+.student-feature-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.student-feature-label {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #c7d2fe;
+}
+
+.student-feature-card h3 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.student-feature-card p {
+    margin: 8px 0 21px;
+    color: #cbd5e1;
+}
+
+.student-feature-progress {
+    margin-bottom: 13px;
+}
+
+.student-feature-progress-bar {
+    width: 100%;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(255,255,255,.15);
+}
+
+.student-feature-progress-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #818cf8;
+}
+
+.student-feature-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.student-feature-percent {
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.student-feature-action {
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.student-feature-action:hover {
+    color: #c7d2fe;
+}
+
+.student-side-card {
+    padding: 24px;
+    border-radius: 22px;
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+.student-side-card h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #111827;
+}
+
+.student-side-card p {
+    margin: 7px 0 18px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.student-readiness-ring {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background:
+        conic-gradient(#4f46e5 calc(var(--readiness) * 1%), #e5e7eb 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.student-readiness-ring-inner {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.student-readiness-ring-inner strong {
+    font-size: 21px;
+    color: #111827;
+}
+
+.student-readiness-ring-inner span {
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+.student-subject-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.student-subject-card {
+    padding: 20px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.student-subject-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, .07);
+}
+
+.student-subject-top {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 18px;
+}
+
+.student-subject-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-size: 17px;
+}
+
+.student-subject-card:nth-child(2) .student-subject-icon {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.student-subject-card:nth-child(3) .student-subject-icon {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.student-subject-name {
+    margin: 0;
+    font-size: 16px;
+    color: #111827;
+}
+
+.student-subject-meta {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.student-subject-progress {
+    height: 7px;
+    border-radius: 20px;
+    background: #f3f4f6;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.student-subject-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #6366f1;
+}
+
+.student-subject-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.student-subject-footer span {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.student-subject-footer a {
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #4f46e5;
+}
+
+.student-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.student-panel {
+    padding: 22px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+.student-panel-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: flex-start;
+    margin-bottom: 13px;
+}
+
+.student-panel-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #111827;
+}
+
+.student-panel-header p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.student-list-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 13px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.student-list-row:last-child {
+    border-bottom: 0;
+}
+
+.student-list-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.student-list-meta {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.student-list-score {
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 800;
+    color: #ef4444;
+}
+
+.student-prediction {
+    padding: 19px;
+    border-radius: 16px;
+    background: #f8fafc;
+}
+
+.student-prediction-score {
+    font-size: 35px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.student-prediction-label {
+    display: block;
+    margin-bottom: 15px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.student-progress {
+    height: 8px;
+    overflow: hidden;
+    background: #e5e7eb;
+    border-radius: 20px;
+}
+
+.student-progress span {
+    display: block;
+    height: 100%;
+    background: #4f46e5;
+    border-radius: inherit;
+}
+
+.student-prediction-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+    color: #6b7280;
+    font-size: 11px;
+}
+
+.student-ai {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 25px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #312e81, #4f46e5);
+    color: white;
+    margin-top: 2px;
+}
+
+.student-ai-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.student-ai-icon {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.14);
+    font-size: 20px;
+}
+
+.student-ai h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.student-ai p {
+    margin: 5px 0 0;
+    color: #c7d2fe;
+    font-size: 12px;
+}
+
+.student-ai-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 9px;
+}
+
+.student-ai-actions a {
+    padding: 9px 13px;
+    border-radius: 10px;
+    color: white;
+    background: rgba(255,255,255,.12);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.student-ai-actions a:hover {
+    background: rgba(255,255,255,.2);
+    color: white;
+}
+
+.student-empty {
+    padding: 25px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+@media (max-width: 1050px) {
+    .student-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .student-continue,
+    .student-data-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 780px) {
+    .student-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .student-subject-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .student-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .student-hero h1 {
+        font-size: 24px;
+    }
+
+    .student-ai {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .student-ai-actions {
+        justify-content: flex-start;
+    }
+}
+</style>
+
+<div class="student-dashboard">
+
+    <!-- HERO -->
+    <section class="student-hero">
+        <div>
+            <p class="eyebrow">
+                {{ enrollment.academic_year.name|default:"CURRENT TERM" }}
+            </p>
+
+            <h1>
+                Welcome back, {{ request.user.first_name|default:"Student" }} 👋
+            </h1>
+
+            <p>
+                {{ grade.name|default:"Your learning" }} ·
+                Keep building your knowledge one step at a time.
+            </p>
+        </div>
+
+        <div class="student-hero-actions">
+            <a href="{% url 'school_learning' %}" class="student-btn student-btn-primary">
+                <i class="fa-solid fa-play"></i>
+                Continue Learning
+            </a>
+
+            <a href="{% url 'school_assessment' %}" class="student-btn student-btn-secondary">
+                <i class="fa-solid fa-clipboard-check"></i>
+                Assessments
+            </a>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="student-stats">
+
+        <div class="student-stat student-stat-purple">
+            <div class="student-stat-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <span class="student-stat-label">Learning Readiness</span>
+            <strong class="student-stat-value">{{ readiness }}%</strong>
+            <span class="student-stat-note">Based on assessed concepts</span>
+        </div>
+
+        <div class="student-stat student-stat-orange">
+            <div class="student-stat-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <span class="student-stat-label">Learning Gaps</span>
+            <strong class="student-stat-value">{{ gap_count }}</strong>
+            <span class="student-stat-note">{{ learning_loss }}% estimated learning loss</span>
+        </div>
+
+        <div class="student-stat student-stat-green">
+            <div class="student-stat-icon">
+                <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <span class="student-stat-label">Concept Mastery</span>
+            <strong class="student-stat-value">{{ mastered_count }}</strong>
+            <span class="student-stat-note">Mastered concepts</span>
+        </div>
+
+        <div class="student-stat student-stat-blue">
+            <div class="student-stat-icon">
+                <i class="fa-solid fa-file-circle-check"></i>
+            </div>
+            <span class="student-stat-label">Assessments</span>
+            <strong class="student-stat-value">{{ attempts|length }}</strong>
+            <span class="student-stat-note">Completed / started</span>
+        </div>
+
+    </section>
+
+    <!-- CONTINUE LEARNING -->
+    <section class="student-section">
+
+        <div class="student-section-header">
+            <div>
+                <h2>Continue Learning</h2>
+                <p>Pick up where your learning journey left off.</p>
+            </div>
+
+            <a class="student-section-link" href="{% url 'school_learning' %}">
+                View Learning Path
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="student-continue">
+
+            {% with featured=subject_cards|first %}
+
+            <div class="student-feature-card">
+
+                {% if featured %}
+
+                    <span class="student-feature-label">
+                        Recommended subject
+                    </span>
+
+                    <h3>{{ featured.subject.name }}</h3>
+
+                    <p>
+                        {{ featured.chapter_count }} chapters available
+                        · {{ featured.learning_progress }}% complete
+                    </p>
+
+                    <div class="student-feature-progress">
+                        <div class="student-feature-progress-bar">
+                            <span style="width: {{ featured.learning_progress }}%"></span>
+                        </div>
+                    </div>
+
+                    <div class="student-feature-footer">
+                        <span class="student-feature-percent">
+                            {{ featured.completed_total }}/{{ featured.resource_total }} resources completed
+                        </span>
+
+                        <a class="student-feature-action" href="{% url 'school_learning' %}">
+                            Continue
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                {% else %}
+
+                    <span class="student-feature-label">Getting Started</span>
+                    <h3>Start your learning journey</h3>
+                    <p>
+                        Your subjects will appear here once they are assigned.
+                    </p>
+
+                    <a class="student-feature-action" href="{% url 'school_learning' %}">
+                        Open My Learning
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+            {% endwith %}
+
+            <div class="student-side-card">
+
+                <h3>Overall Readiness</h3>
+
+                <p>
+                    Your current learning readiness
+                </p>
+
+                <div class="student-readiness-ring"
+                     style="--readiness: {{ readiness }}">
+                    <div class="student-readiness-ring-inner">
+                        <strong>{{ readiness }}%</strong>
+                        <span>ready</span>
+                    </div>
+                </div>
+
+                <div style="text-align:center;">
+                    <a href="{% url 'school_gaps' %}" class="student-section-link">
+                        Review learning gaps
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- SUBJECTS -->
+    <section class="student-section">
+
+        <div class="student-section-header">
+            <div>
+                <h2>My Subjects</h2>
+                <p>
+                    {{ subject_count }} subject{{ subject_count|pluralize }}
+                    assigned to your learning profile.
+                </p>
+            </div>
+        </div>
+
+        <div class="student-subject-grid">
+
+            {% for item in subject_cards %}
+
+            <div class="student-subject-card">
+
+                <div class="student-subject-top">
+
+                    <div class="student-subject-icon">
+
+                        {% if "science" in item.subject.name|lower %}
+                            <i class="fa-solid fa-flask"></i>
+                        {% elif "math" in item.subject.name|lower %}
+                            <i class="fa-solid fa-calculator"></i>
+                        {% elif "english" in item.subject.name|lower %}
+                            <i class="fa-solid fa-book-open"></i>
+                        {% else %}
+                            <i class="fa-solid fa-book"></i>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+                        <h3 class="student-subject-name">
+                            {{ item.subject.name }}
+                        </h3>
+
+                        <p class="student-subject-meta">
+                            {{ item.chapter_count }} chapter{{ item.chapter_count|pluralize }}
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="student-subject-progress">
+                    <span style="width: {{ item.learning_progress }}%"></span>
+                </div>
+
+                <div class="student-subject-footer">
+                    <span>{{ item.learning_progress }}% complete</span>
+
+                    <a href="{% url 'school_learning' %}?subject={{ item.subject.id }}#subject-{{ item.subject.id }}">
+                        Open
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="student-panel" style="grid-column: 1 / -1;">
+                <div class="student-empty">
+                    No subjects have been assigned to you yet.
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <!-- LEARNING INSIGHTS -->
+    <section class="student-section">
+
+        <div class="student-data-grid">
+
+            <!-- LEARNING GAPS -->
+            <div class="student-panel">
+
+                <div class="student-panel-header">
+                    <div>
+                        <h3>Priority Learning Gaps</h3>
+                        <p>Concepts that need your attention.</p>
+                    </div>
+
+                    <a href="{% url 'school_gaps' %}"
+                       class="student-section-link">
+                        View All
+                    </a>
+                </div>
+
+                {% for gap in gaps|slice:":5" %}
+
+                <div class="student-list-row">
+
+                    <div>
+                        <span class="student-list-title">
+                            {{ gap.concept.title }}
+                        </span>
+
+                        <span class="student-list-meta">
+                            {{ gap.concept.chapter.subject.name }}
+                            ·
+                            {{ gap.concept.difficulty|title }}
+                        </span>
+                    </div>
+
+                    <span class="student-list-score">
+                        {{ gap.gap_score|floatformat:0 }}% gap
+                    </span>
+
+                </div>
+
+                {% empty %}
+
+                <div class="student-empty">
+                    No open learning gaps. Keep going! 🎯
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- AI PREDICTION -->
+            <div class="student-panel">
+
+                <div class="student-panel-header">
+                    <div>
+                        <h3>Learning Prediction</h3>
+                        <p>Based on your latest assessment data.</p>
+                    </div>
+                </div>
+
+                {% if latest_prediction %}
+
+                <div class="student-prediction">
+
+                    <div class="student-prediction-score">
+                        {{ latest_prediction.predicted_score|floatformat:0 }}/100
+                    </div>
+
+                    <span class="student-prediction-label">
+                        Predicted score
+                    </span>
+
+                    <div class="student-progress">
+                        <span style="width: {{ latest_prediction.readiness_score }}%"></span>
+                    </div>
+
+                    <div class="student-prediction-meta">
+                        <span>
+                            {{ latest_prediction.readiness_score|floatformat:0 }}% readiness
+                        </span>
+
+                        <span>
+                            {{ latest_prediction.learning_loss_percentage|floatformat:0 }}% loss
+                        </span>
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="student-empty">
+                    Complete an assessment to generate your first learning prediction.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- AI COACH -->
+    <section class="student-ai">
+
+        <div class="student-ai-content">
+
+            <div class="student-ai-icon">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+
+            <div>
+                <h3>Your AI Learning Coach</h3>
+                <p>
+                    Use your learning data to decide what to focus on next.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="student-ai-actions">
+
+            <a href="{% url 'school_gaps' %}">
+                Explain a Gap
+            </a>
+
+            <a href="{% url 'school_assessment' %}">
+                Practice
+            </a>
+
+            <a href="{% url 'school_learning' %}">
+                Study Plan
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'school/staff_layout.html' %}
+{% block school_content %}
+<div class="school-hero">
+  <div>
+    <small>LEARNING CONTENT</small>
+    <h1>QR Resource Importer</h1>
+    <p>Scan an official QR code or paste its official URL, then connect the resource to a Class, Subject, Chapter and Concept.</p>
+  </div>
+</div>
+{% if messages %}{% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}{% endif %}
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="school-grid-2">
+  <section class="school-panel">
+    <div class="panel-head"><div><h2>1. Scan QR Code</h2><p>Upload a clear image of the QR code printed in the book.</p></div></div>
+    <form method="post" enctype="multipart/form-data" id="qrDecodeForm">
+      {% csrf_token %}<input type="hidden" name="action" value="decode_qr">
+      <div class="qr-camera-box">
+        <video id="qrVideo" autoplay playsinline style="display:none;width:100%;border-radius:14px;"></video>
+        <div id="qrCameraMessage" class="empty-state">Camera scanning is available in supported browsers. You can also upload a QR image below.</div>
+        <button type="button" class="secondary-btn" id="startQrCamera">Use Camera</button>
+        <button type="button" class="secondary-btn" id="stopQrCamera" style="display:none;">Stop Camera</button>
+      </div>
+      <p><strong>Or upload QR image</strong></p>
+      <input type="file" name="qr_image" accept="image/*" required>
+      <br><br><button class="school-btn" type="submit">Decode QR</button>
+    </form>
+    <div class="qr-result" id="qrResult" style="display:none;"><strong>Detected URL:</strong><code id="cameraUrl"></code></div>
+  </section>
+
+  <section class="school-panel">
+    <div class="panel-head"><div><h2>2. Add Resource</h2><p>Verify the official URL and map it to the exact concept.</p></div></div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}<input type="hidden" name="action" value="save_resource">
+      {{ form.non_field_errors }}
+      <p><label>{{ form.concept.label }}</label>{{ form.concept }}{{ form.concept.errors }}</p>
+      <p><label>{{ form.title.label }}</label>{{ form.title }}{{ form.title.errors }}</p>
+      <p><label>{{ form.resource_type.label }}</label>{{ form.resource_type }}{{ form.resource_type.errors }}</p>
+      <p><label>{{ form.url.label }}</label>{{ form.url }}{{ form.url.errors }}</p>
+      <p><label>{{ form.source_name.label }}</label>{{ form.source_name }}{{ form.source_name.errors }}</p>
+      <p><label>{{ form.description.label }}</label>{{ form.description }}</p>
+      <p><label>{{ form.duration_minutes.label }}</label>{{ form.duration_minutes }}</p>
+      <button class="school-btn" type="submit">Save Learning Resource</button>
+    </form>
+  </section>
+</div>
+
+<section class="school-panel">
+  <div class="panel-head"><div><h2>Recently Added Resources</h2><p>Resources already connected to your school's concepts.</p></div></div>
+  {% for r in resources %}
+    <div class="list-row">
+      <div><b>{{ r.title }}</b><small>{{ r.concept.chapter.grade.name }} • {{ r.concept.chapter.subject.name }} • {{ r.concept.chapter.title }} • {{ r.concept.title }}</small></div>
+      <span>{% if r.source_name %}{{ r.source_name }}{% else %}Official source{% endif %}</span>
+      {% if r.url %}<a class="secondary-btn" href="{{ r.url }}" target="_blank" rel="noopener noreferrer">Open</a>{% endif %}
+    </div>
+  {% empty %}<div class="empty-state">No resources have been imported yet.</div>{% endfor %}
+</section>
+
+<script>
+(function(){
+  const video=document.getElementById('qrVideo');
+  const start=document.getElementById('startQrCamera');
+  const stop=document.getElementById('stopQrCamera');
+  const msg=document.getElementById('qrCameraMessage');
+  let stream=null, raf=null;
+  async function startCamera(){
+    if(!('BarcodeDetector' in window)){
+      msg.textContent='Live camera QR scanning is not supported by this browser. Use the image upload option instead.';
+      return;
+    }
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+      video.srcObject=stream; video.style.display='block'; msg.style.display='none'; start.style.display='none'; stop.style.display='inline-block';
+      const detector=new BarcodeDetector({formats:['qr_code']});
+      const canvas=document.createElement('canvas'); const ctx=canvas.getContext('2d');
+      async function scan(){
+        if(!stream) return;
+        if(video.readyState>=2){
+          canvas.width=video.videoWidth; canvas.height=video.videoHeight; ctx.drawImage(video,0,0);
+          try{ const codes=await detector.detect(canvas); if(codes.length && codes[0].rawValue){
+            const url=codes[0].rawValue;
+            document.getElementById('cameraUrl').textContent=url; document.getElementById('qrResult').style.display='block';
+            const input=document.querySelector('input[name="url"]'); if(input) input.value=url;
+            stopCamera(); return;
+          }}catch(e){}
+        }
+        raf=requestAnimationFrame(scan);
+      }
+      scan();
+    }catch(e){ msg.style.display='block'; msg.textContent='Camera access was not available. Please use QR image upload.'; }
+  }
+  function stopCamera(){ if(raf) cancelAnimationFrame(raf); raf=null; if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;} video.srcObject=null; video.style.display='none'; start.style.display='inline-block'; stop.style.display='none'; }
+  start.addEventListener('click',startCamera); stop.addEventListener('click',stopCamera);
+})();
+</script>
+{% endblock %}

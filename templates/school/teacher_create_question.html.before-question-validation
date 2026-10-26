@@ -1,0 +1,5 @@
+{% extends 'school/staff_layout.html' %}
+{% block school_content %}
+<div class="school-hero"><div><small>QUESTION BANK</small><h1>Create question</h1><p>Add an MCQ mapped to a concept, difficulty and Bloom level.</p></div></div>
+<section class="school-panel"><form method="post">{% csrf_token %}{{ form.as_p }}<button class="school-btn" type="submit">Save Question</button></form></section>
+{% endblock %}

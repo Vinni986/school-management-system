@@ -1,0 +1,71 @@
+{% extends 'school/staff_layout.html' %}
+{% block school_content %}
+<div class="school-hero">
+  <div>
+    <small>TEACHER PROFILE</small>
+    <h1>{{ teacher.get_full_name|default:teacher.username }}</h1>
+    <p>{{ teacher.username }} • {{ teacher.email|default:"No email" }}</p>
+  </div>
+</div>
+
+<div class="metric-grid">
+  <div class="metric-card purple"><small>Assigned students</small><strong>{{ student_count }}</strong></div>
+  <div class="metric-card orange"><small>Teaching assignments</small><strong>{{ assignments|length }}</strong></div>
+  <div class="metric-card green"><small>Completed attempts</small><strong>{{ assessment_count }}</strong></div>
+  <div class="metric-card blue"><small>Learning gaps</small><strong>{{ open_gaps }}</strong></div>
+</div>
+
+<section class="school-panel">
+  <div class="panel-head"><div><h2>Teaching assignments</h2><p>Active subjects, classes and academic years in this school.</p></div></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Subject</th><th>Class / Section</th><th>Academic year</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for assignment in assignments %}
+      <tr>
+        <td>{{ assignment.subject.name }}</td>
+        <td>{% if assignment.section %}{{ assignment.section.grade.name }} – {{ assignment.section.name }}{% else %}Grade-wide assignment{% endif %}</td>
+        <td>{{ assignment.academic_year }}</td>
+        <td>{% if assignment.is_active %}Active{% else %}Inactive{% endif %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">No active teaching assignments.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+
+<section class="school-panel">
+  <div class="panel-head"><div><h2>Students in assigned classes</h2></div></div>
+  {% for enrollment in students %}
+    <div class="list-row">
+      <div>
+        <b>{{ enrollment.student.student.get_full_name }}</b>
+        <small>{{ enrollment.section.grade.name }} – Section {{ enrollment.section.name }} • {{ enrollment.academic_year }}</small>
+      </div>
+      <a href="{% url 'school_principal_student_detail' enrollment.student.pk %}">View student</a>
+    </div>
+  {% empty %}
+    <p class="empty">No active students are enrolled in this teacher's assigned classes.</p>
+  {% endfor %}
+</section>
+
+<section class="school-panel">
+  <div class="panel-head"><div><h2>Recent assessment performance</h2></div></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Student</th><th>Assessment</th><th>Subject</th><th>Score</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for attempt in recent_attempts %}
+      <tr>
+        <td>{{ attempt.student.student.get_full_name }}</td>
+        <td>{{ attempt.assessment.title }}</td>
+        <td>{{ attempt.assessment.subject.name }}</td>
+        <td>{{ attempt.percentage }}%</td>
+        <td>{{ attempt.completed_at|date:"d M Y" }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">No completed assessments for these teaching assignments.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endblock %}
